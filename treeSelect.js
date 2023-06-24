@@ -1,84 +1,14 @@
-# Render Tree Select
+const assert = require("assert");
 
-- First attempt I made the mistake of trying to build the data structure just as a regular object. I made the mistake of choosing this approach because I thought that given the time restriction it would be quicker to iterate a solution. When I got to the point where I needed to perform actions on the tree it became apparent that it would be difficult to traverse the tree and perform the necessary actions.
-- Second attempt was done by creating a TreeNode class. The node class made it easier to traverse the tree and perform actions on each node.
+/*
+ * Complete the 'renderTreeSelect' function below.
+ *
+ * The function is expected to return a STRING.
+ * The function accepts following parameters:
+ *  1. STRING_ARRAY paths
+ *  2. STRING_ARRAY clicks
+ */
 
-```bash
-# to run
-node treeSelect.js
-```
-
-```javascript
-// first attempt
-function renderTreeSelect(paths, clicks) {
-  const treeObject = {};
-
-  // create a node on the tree
-  const createNode = (path) => {
-    const pathArr = path.split("/");
-    let currentLevel = treeObject;
-    pathArr.forEach((path, index) => {
-      if (!currentLevel[path]) {
-        currentLevel[path] = {};
-      }
-      currentLevel = currentLevel[path];
-    });
-  };
-
-  // create all the nodes on the tree
-  paths.forEach((path) => createNode(path));
-
-  // sort tree
-  const sortTreeAlphabetically = (tree) => {
-    if (typeof tree !== "object" || tree === null) {
-      return tree;
-    }
-
-    if (Array.isArray(tree)) {
-      return tree.map(sortTreeAlphabetically);
-    }
-
-    const sortedObject = {};
-    Object.keys(tree)
-      .sort()
-      .forEach((obj) => {
-        sortedObject[obj] = sortTreeAlphabetically(tree[obj]);
-      });
-
-    return sortedObject;
-  };
-
-  const sortedTree = sortTreeAlphabetically(treeObject);
-
-  // add isChecked property to each node
-  const addIsCheckedToNodes = (obj) => {
-    if (typeof obj !== "object" || obj === null) {
-      return obj;
-    }
-
-    const updatedObj = { ...obj };
-    updatedObj.isChecked = false;
-
-    for (let key in updatedObj) {
-      updatedObj[key] = addIsCheckedToNodes(updatedObj[key]);
-    }
-
-    return updatedObj;
-  };
-
-  // addIsCheckedToNodes(sortedTree)
-  const treeWithChecks = addIsCheckedToNodes(sortedTree);
-
-  console.log(JSON.stringify(treeWithChecks));
-
-  // performactions on tree
-  // write tree to string
-  return tree;
-}
-```
-
-```javascript
-// second attempt
 function renderTreeSelect(paths, clicks) {
   class TreeNode {
     constructor(parentNode) {
@@ -258,4 +188,20 @@ function renderTreeSelect(paths, clicks) {
   // trim last new line
   return printTree(treeObject).slice(0, -1);
 }
-```
+
+const paths = ["A/B/F", "A/B/D", "A/B/E", "A/C", "X/Y", "X/Z"];
+const clicks = ["A", "B", "D", "E"];
+
+const treeSelect = renderTreeSelect(paths, clicks);
+
+const test = `[o]A
+.[o]B
+..[o]D
+..[o]E
+..[]F
+.[o]C
+[]X
+.[]Y
+.[]Z`;
+
+assert.strictEqual(treeSelect, test, "Expect the strings to be thesame");
